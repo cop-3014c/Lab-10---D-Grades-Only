@@ -19,9 +19,3 @@ int top_score_student(const int grades[MAX_S][MAX_HW], int n_students,
   // TODO: Implement this function.
   return -1;
 }
-
-void hw_stats(const int grades[MAX_S][MAX_HW], int n_students, int n_hws,
-              int hw_id, int& min, int& max, int& med, int& avg) {
-  // TODO: Implement this function.
-  return;
-}

@@ -40,11 +40,10 @@ Reimplementing code that does those calculations is a waste of your time and wil
 
 As usual, you should read the specification below, then write test cases and implement the functions.
 
-These are the 3 functions you will write (defined in grades.h):
+These are the 2 functions you will write (defined in grades.h):
 
 * `int student_average(const int grades[MAX_S][MAX_HW], int n_students, int n_hws, int student_id);`
 * `int top_score_student(const int grades[MAX_S][MAX_HW], int n_students, int n_hws);`
-* `void hw_stats(const int grades[MAX_S][MAX_HW], int n_students, int n_hws, int hw_id, int& min, int& max, int& med, int& avg);`
 
 The `MAX_S` and `MAX_HW` global constants are defined in `grades.h` and explained in the next section. You are allowed to use them.
 
@@ -115,27 +114,9 @@ Your function should not modify any of the values in `grades` or print anything 
 
 **Example:** Using the gradebook in the example above, we call the function with `3` as the value for `n_students` and `4` as the value of `n_hws` since that's how many students and homeworks there are. Then `top_score_student(grades, 3, 4)` returns 0 because Student 0 had the highest average on the 4 assignments.
 
-### hw_stats()
-
-`void hw_stats(const int grades[MAX_S][MAX_HW], int n_students, int n_hws, int hw_id, int& min, int& max, int& med, int& avg)`
-
-**Input:** A gradebook, the number of students and homeworks, a homework ID, and some reference variables to store the results in
-
-**Function behavior:** If any of the values for `n_students`, `n_hws`, or `hw_id` are not valid, return immediately without doing anything else. Otherwise, when this function returns, the values of `min`, `max`, `med`, and `avg` should be set to the minimum, maximum, median, and average scores of the `n_students` students on the homework with the ID `hw_id`.
-Your function should not modify any of the values in `grades` or print anything out.
-
-**Example:** Using the gradebook in the example above, Student 0 got a score of 80 on HW 1. Student 1 got a 100 and Student 2 got a 0.
-
-We can call `hw_stats(grades, 3, 4, 1, a, b, c, d);` to get the statistics for HW 1. After the function returns, the values of the following variables will be changed:
-
-* The value of `a` will be 0 because 0 was the minimum score on HW 1
-* The value of `b` will be 100 because 100 was the maximum score on HW 1
-* The value of `c` will be 80 because 80 was the median score on HW 1
-* The value of `d` will be 60 because 60 was the average score on HW 1
-
 ### Write test case
 
-For this part, you only need to write one test case, but make it a good one!
+For this part, you only need to write one test case, but make it a good one! **Do not use the example on this README as your test case.**
 
 The test case file looks like this:
 
@@ -147,7 +128,6 @@ class GradesTest : public ::testing::Test {
     int n_hws = 0;
     int expected_averages[MAX_S] = {0};
     int expected_top_students[MAX_S] = {0};
-    int expected_hw_stats[MAX_HW][4] = {0};
 };
 ```
 
@@ -157,7 +137,6 @@ Fill in these values and don't change anything else in the file:
 * `n_students` and `n_hws` are how many students and hws there are.
 * For `expected_averages`, fill in an array of values corresponding to each student's average score on those assignments. The 0th element of the array should have Student 0's average score, and so on.
 * For `expected_top_students`, fill in an array of all the student IDs, in ascending order, that are tied for highest average score because any of these numbers is an allowable answer. If there's only one student with the highest score, this should be an array with one thing in it.
-* For `expected_hw_stats`, fill in a 2D array. Each row of the array should be an array with the minimum, maximum, median, and average score for that HW.
 
 ### Example test case
 
@@ -175,12 +154,6 @@ The gradebook would be represented by this array so we set the value of `grades`
 * `n_students` is 4 and `n_hws` is 4
 * The average score for Student 0 was 87, the average for Student 1 was 82, the average for Student 2 was 0, and the average for Student 3 was 87. So the value in the test case for `expected_averages` is an array with those numbers in that order.
 * Students 0 and 3 are tied for the highest average, so the value for `expected_top_students` is an array with the numbers 0 and 3 in that order. We have to do this when writing the test cases since the function spec says that the `top_score_student()` function could return either of those values.
-* Now we have to fill out `expected_hw_stats`. An easy way to do it is to think about each assignment separately:
-    * For HW 0, the student scores were 90, 80, 0, and 87. So the minimum is 0, maximum is 90, median is 83, and average is 64. If we put those numbers in that order in a 4-element array, we would get `{0, 90, 83, 64}`.
-    * For HW 1, the scores were 80, 100, 0, 87. Minimum is 0, maximum is 100, median is 83, average is 66. This corresponds to this array: `{0, 100, 83, 66}`
-    * For HW 2, the scores were 95, 70, 0, 87. Minimum is 0, maximum is 95, median is 78, average is 63. The array is `{0, 95, 78, 63}`
-    * For HW 3, the scores were 85, 80, 0, 87. Minimum is 0, maximum is 87, median is 82, average is 63. The array is `{0, 87, 82, 63}`
-    * Now use those arrays, in that order, as rows in the 2D array for `expected_hw_stats`
 
 The resulting test case is below:
 
@@ -193,10 +166,6 @@ int n_students = 4;
 int n_hws = 4;
 int expected_averages[MAX_S] = {87, 82, 0, 87};
 int expected_top_students[MAX_S] = {0, 3};
-int expected_hw_stats[MAX_HW][4] = { {0, 90, 83, 64},
-                                     {0, 100, 83, 66},
-                                     {0, 95, 78, 63},
-                                     {0, 87, 82, 63} };
 ```
 
 ### Implement the functions
@@ -221,9 +190,8 @@ Running `make test` should be enough to test your program, but if you want to ru
   * (1 points) TODO comment check
   * (1 points) Style check
   * (42 points) Autograder test cases
-    * (12 points) `student_average()`
-    * (12 points) `top_score_student()`
-    * (18 points) `hw_stats()`
+    * (21 points) `student_average()`
+    * (21 points) `top_score_student()`
   * (6 points) Code design (Did you use functions effectively to avoid repeating the same code?)
   * (10 points) 1 good test case in `grades_test.cpp`
 * (40 points) Written assignment – see Gradescope for point breakdowns
